@@ -21,18 +21,74 @@ function getErrorMessage(error) {
 class LivroController {
     static listarLivros(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const listaLivros = yield Livro_1.default.find({});
-            res.status(200).json(listaLivros);
+            try {
+                const listaLivros = yield Livro_1.default.find({});
+                res.status(200).json(listaLivros);
+            }
+            catch (error) {
+                res.status(500).json({ message: `${getErrorMessage(error)} - falha ao buscar os livros` });
+            }
+        });
+    }
+    static buscarLivroPorId(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = req.params.id;
+                const livroEncontrado = yield Livro_1.default.findById(id);
+                if (livroEncontrado) {
+                    res.status(200).json(livroEncontrado);
+                }
+                else {
+                    res.status(200).json({ message: "Livro não encontrado na base de dados" });
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: `${getErrorMessage(error)} - falha ao buscar o livro` });
+            }
+        });
+    }
+    static editarLivroPorId(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = req.params.id;
+                const livroEncontrado = yield Livro_1.default.findByIdAndUpdate(id, req.body);
+                if (livroEncontrado) {
+                    res.status(200).json({ message: `Livro atualizado!` });
+                }
+                else {
+                    res.status(200).json({ message: "Livro não encontrado na base de dados" });
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: `${getErrorMessage(error)} - falha ao buscar o livro` });
+            }
         });
     }
     static adicionaLivros(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const novoLivro = Livro_1.default.create(req.body);
+                const novoLivro = yield Livro_1.default.create(req.body);
                 res.status(201).json({ message: "livro cadastrado com sucesso", livro: novoLivro });
             }
             catch (error) {
                 res.status(500).json({ message: `${getErrorMessage(error)} - falha ao cadastrar livro` });
+            }
+        });
+    }
+    static deletarLivroPorId(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = req.params.id;
+                const livroEncontrado = yield Livro_1.default.findByIdAndDelete(id);
+                if (livroEncontrado) {
+                    res.status(200).json({ message: `Livro Deletado!` });
+                }
+                else {
+                    res.status(200).json({ message: "Livro não encontrado na base de dados" });
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: `${getErrorMessage(error)} - falha ao buscar o livro` });
             }
         });
     }
