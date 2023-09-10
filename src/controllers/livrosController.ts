@@ -1,5 +1,6 @@
 import { Response, Request } from "express";
 import livro from "../models/Livro"
+import { autor } from "../models/Autor";
 
 function getErrorMessage(error: unknown) {
     if (error instanceof Error) return error.message
@@ -47,9 +48,12 @@ export default class LivroController {
     }
 
     static async adicionaLivros (req: Request, res: Response){
+        const novoLivro = req.body;
         try{
-            const novoLivro = await livro.create(req.body)
-            res.status(201).json({message: "livro cadastrado com sucesso", livro: novoLivro});
+            const autorEncontrado = await autor.findById(novoLivro.autor);
+            const livroCompleto = {...novoLivro, autor: {...autorEncontrado}};
+            const livroCriado = await livro.create(livroCompleto);
+            res.status(201).json({message: "livro cadastrado com sucesso", livro: livroCriado});
         } catch (error) {
             res.status(500).json({message: `${getErrorMessage(error)} - falha ao cadastrar livro`})
         }
