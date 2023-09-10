@@ -29,10 +29,4 @@ function dbConection() {
 dbConection();
 const app = (0, express_1.default)();
 (0, index_1.default)(app);
-// // app.delete("/livros/:id", (req, res) => {
-// //   const index = buscaLivro(req.params.id);
-// //   livros.splice(index, 1);
-// //   res.status(200).send("livro removido com sucesso");
-// // });
 exports.default = app;
-//

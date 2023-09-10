@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Livro_1 = __importDefault(require("../models/Livro"));
+const Autor_1 = require("../models/Autor");
 function getErrorMessage(error) {
     if (error instanceof Error)
         return error.message;
@@ -66,9 +67,12 @@ class LivroController {
     }
     static adicionaLivros(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            const novoLivro = req.body;
             try {
-                const novoLivro = yield Livro_1.default.create(req.body);
-                res.status(201).json({ message: "livro cadastrado com sucesso", livro: novoLivro });
+                const autorEncontrado = yield Autor_1.autor.findById(novoLivro.autor);
+                const livroCompleto = Object.assign(Object.assign({}, novoLivro), { autor: Object.assign({}, autorEncontrado) });
+                const livroCriado = yield Livro_1.default.create(livroCompleto);
+                res.status(201).json({ message: "livro cadastrado com sucesso", livro: livroCriado });
             }
             catch (error) {
                 res.status(500).json({ message: `${getErrorMessage(error)} - falha ao cadastrar livro` });
@@ -89,6 +93,18 @@ class LivroController {
             }
             catch (error) {
                 res.status(500).json({ message: `${getErrorMessage(error)} - falha ao buscar o livro` });
+            }
+        });
+    }
+    static buscarLivrosPorEditora(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const editora = req.query.editora;
+                const listaLivros = yield Livro_1.default.find({ editora: editora });
+                res.status(200).json(listaLivros);
+            }
+            catch (error) {
+                res.status(500).json({ message: `${getErrorMessage(error)} - falha ao buscar os livros` });
             }
         });
     }

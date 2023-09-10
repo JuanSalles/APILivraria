@@ -72,4 +72,14 @@ export default class LivroController {
             res.status(500).json({message: `${getErrorMessage(error)} - falha ao buscar o livro`});
         }
     }
+
+    static async buscarLivrosPorEditora (req: Request, res: Response){
+        try {
+            const editora = req.query.editora;
+            const listaLivros = await livro.find({editora: editora});
+             res.status(200).json(listaLivros);
+        } catch (error) {
+            res.status(500).json({message: `${getErrorMessage(error)} - falha ao buscar os livros`});
+        }
+    }
 }
